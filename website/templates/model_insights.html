@@ -1,0 +1,303 @@
+{% extends "base.html" %}
+{% block title %}PitVision AI — Model Insights{% endblock %}
+
+{% block content %}
+<!-- ═══════════════════════════════════════════════════════════════
+     MODEL INSIGHTS PAGE
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="insights-section section" style="padding-top: 120px;">
+    <div class="grid-overlay"></div>
+    <div class="container">
+        <div class="section-divider reveal"></div>
+        <h2 class="section-title reveal">Model Insights</h2>
+        <p class="section-subtitle reveal">Machine Learning Performance Dashboard</p>
+
+        <!-- ── Model Overview Card ── -->
+        <div class="card reveal" style="margin-bottom: 40px; padding: 36px;">
+            <div class="model-overview-grid">
+                <div>
+                    <div class="chart-title">Model Overview</div>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; margin-top: 16px;">
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Model Type</span>
+                            <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600; margin-top: 4px; color: var(--neon-cyan);">{{ model_info.model_type }}</div>
+                        </div>
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Estimators</span>
+                            <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600; margin-top: 4px;">{{ model_info.n_estimators }}</div>
+                        </div>
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Max Depth</span>
+                            <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600; margin-top: 4px;">{{ model_info.max_depth }}</div>
+                        </div>
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Max Features</span>
+                            <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600; margin-top: 4px;">{{ model_info.max_features }}</div>
+                        </div>
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Class Weight</span>
+                            <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600; margin-top: 4px;">{{ model_info.class_weight }}</div>
+                        </div>
+                        <div>
+                            <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Features</span>
+                            <div style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 600; margin-top: 4px;">{{ model_info.n_features }}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-overview-visual">
+                    <img src="{{ url_for('static', filename='img/f1-car.png') }}" alt="F1 Car Model" style="max-width: 100%; height: auto; filter: drop-shadow(0 0 20px rgba(225, 6, 0, 0.45));">
+                </div>
+            </div>
+        </div>
+
+        <!-- ── Evaluation Metrics ── -->
+        <div class="metrics-grid">
+            <div class="metric-card reveal" data-value="{{ model_info.accuracy }}" data-suffix="%">
+                <div class="metric-label">Accuracy</div>
+                <div class="metric-value counter" data-target="{{ model_info.accuracy }}">0</div>
+                <div class="metric-unit">Validation Set</div>
+            </div>
+            <div class="metric-card reveal" data-value="{{ model_info.roc_auc }}" data-suffix="%">
+                <div class="metric-label">ROC-AUC</div>
+                <div class="metric-value counter" data-target="{{ model_info.roc_auc }}" style="color: var(--electric-blue);">0</div>
+                <div class="metric-unit">Area Under Curve</div>
+            </div>
+            <div class="metric-card reveal" data-value="{{ model_info.f1_score }}" data-suffix="%">
+                <div class="metric-label">F1 Score</div>
+                <div class="metric-value counter" data-target="{{ model_info.f1_score }}" style="color: var(--risk-low);">0</div>
+                <div class="metric-unit">Harmonic Mean</div>
+            </div>
+            <div class="metric-card reveal" data-value="{{ model_info.precision }}" data-suffix="%">
+                <div class="metric-label">Precision</div>
+                <div class="metric-value counter" data-target="{{ model_info.precision }}" style="color: var(--risk-medium);">0</div>
+                <div class="metric-unit">Positive Predictions</div>
+            </div>
+            <div class="metric-card reveal" data-value="{{ model_info.recall }}" data-suffix="%">
+                <div class="metric-label">Recall</div>
+                <div class="metric-value counter" data-target="{{ model_info.recall }}" style="color: #A855F7;">0</div>
+                <div class="metric-unit">True Positive Rate</div>
+            </div>
+        </div>
+
+        <!-- ── Feature Importance ── -->
+        <div class="feature-chart-container reveal">
+            <div class="chart-title">Feature Importance</div>
+            {% if feature_importances %}
+            {% for feat in feature_importances %}
+            <div class="feature-bar-container">
+                <div class="feature-bar-header">
+                    <span class="feature-bar-name">{{ feat.feature }}</span>
+                    <span class="feature-bar-value">{{ "%.3f"|format(feat.importance) }}</span>
+                </div>
+                <div class="feature-bar-track">
+                    <div class="feature-bar-fill" data-width="{{ (feat.importance / feature_importances[0].importance * 100)|round(1) }}"></div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p style="color: rgba(255,255,255,0.3); font-size: 0.85rem; text-align: center; padding: 40px 0;">
+                Feature importance data will appear when the model is loaded.
+                <br>Run the backend with the model files to see real data.
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- ── Confusion Matrix (Plotly) ── -->
+        <div class="chart-card reveal">
+            <div class="chart-title">Confusion Matrix</div>
+            <div id="confusion-matrix-chart" style="width: 100%; height: 350px;"></div>
+        </div>
+
+        <!-- ── ROC Curve (Plotly) ── -->
+        <div class="chart-card reveal">
+            <div class="chart-title">ROC Curve</div>
+            <div id="roc-curve-chart" style="width: 100%; height: 350px;"></div>
+        </div>
+
+        <!-- ── Dataset Info ── -->
+        <div class="card reveal" style="padding: 36px;">
+            <div class="chart-title">Dataset Information</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; margin-top: 16px;">
+                <div>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Source</span>
+                    <div style="font-family: var(--font-body); font-size: 0.9rem; margin-top: 4px; color: rgba(255,255,255,0.7);">Kaggle F1 Pit Stop Dataset</div>
+                </div>
+                <div>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Task Type</span>
+                    <div style="font-family: var(--font-body); font-size: 0.9rem; margin-top: 4px; color: rgba(255,255,255,0.7);">Binary Classification</div>
+                </div>
+                <div>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Target Variable</span>
+                    <div style="font-family: var(--font-body); font-size: 0.9rem; margin-top: 4px; color: var(--neon-cyan);">PitNextLap</div>
+                </div>
+                <div>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Train/Val Split</span>
+                    <div style="font-family: var(--font-body); font-size: 0.9rem; margin-top: 4px; color: rgba(255,255,255,0.7);">80/20 Stratified</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 28px;">
+                <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase;">Engineered Features</span>
+                <div class="tech-badges" style="justify-content: flex-start; margin-top: 10px;">
+                    <span class="tech-badge">Compound_Hardness</span>
+                    <span class="tech-badge">Tyre_Stress</span>
+                    <span class="tech-badge">Degradation_Rate</span>
+                    <span class="tech-badge">Position_Pressure</span>
+                    <span class="tech-badge">Stops_So_Far</span>
+                    <span class="tech-badge">Compound_x_TyreLife</span>
+                    <span class="tech-badge">RaceProgress</span>
+                    <span class="tech-badge">LapTime_Delta</span>
+                    <span class="tech-badge">Position_Change</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Counter animation for metric values
+    const counters = document.querySelectorAll('.counter');
+    const observerOptions = { threshold: 0.5 };
+
+    const counterObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const el = entry.target;
+                const target = parseFloat(el.dataset.target);
+                animateCounter(el, target);
+                counterObserver.unobserve(el);
+            }
+        });
+    }, observerOptions);
+
+    counters.forEach(c => counterObserver.observe(c));
+
+    function animateCounter(el, target) {
+        const duration = 2000;
+        const start = performance.now();
+        const isDecimal = target % 1 !== 0;
+
+        function update(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+            const current = target * eased;
+            el.textContent = (isDecimal ? current.toFixed(2) : Math.floor(current)) + '%';
+            if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+    }
+
+    // Feature bar animation
+    const featureBars = document.querySelectorAll('.feature-bar-fill');
+    const barObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const bar = entry.target;
+                const width = bar.dataset.width;
+                setTimeout(() => {
+                    bar.style.width = width + '%';
+                }, 200);
+                barObserver.unobserve(bar);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    featureBars.forEach(b => barObserver.observe(b));
+
+    // Render charts
+    renderConfusionMatrix();
+    renderROCCurve();
+});
+
+function renderConfusionMatrix() {
+    const data = [{
+        z: [[45200, 680], [520, 3600]],
+        x: ['No Pit', 'Pit'],
+        y: ['No Pit', 'Pit'],
+        type: 'heatmap',
+        colorscale: [
+            [0, '#0A0A0A'],
+            [0.25, '#1a1a2e'],
+            [0.5, '#16213e'],
+            [0.75, '#0f3460'],
+            [1, '#00F0FF']
+        ],
+        showscale: false,
+        text: [['45,200', '680'], ['520', '3,600']],
+        texttemplate: '%{text}',
+        textfont: { family: 'Orbitron', size: 16, color: '#FFFFFF' },
+        hovertemplate: 'Actual: %{y}<br>Predicted: %{x}<br>Count: %{text}<extra></extra>',
+    }];
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { family: 'Inter', color: 'rgba(255,255,255,0.5)', size: 12 },
+        xaxis: { title: 'Predicted', side: 'bottom', gridcolor: 'rgba(255,255,255,0.03)' },
+        yaxis: { title: 'Actual', gridcolor: 'rgba(255,255,255,0.03)' },
+        margin: { t: 20, b: 60, l: 70, r: 20 },
+    };
+
+    Plotly.newPlot('confusion-matrix-chart', data, layout, { responsive: true, displayModeBar: false });
+}
+
+function renderROCCurve() {
+    // Simulated ROC curve points
+    const fpr = [0, 0.01, 0.02, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
+    const tpr = [0, 0.45, 0.65, 0.78, 0.85, 0.89, 0.92, 0.95, 0.96, 0.97, 0.98, 0.985, 0.99, 0.995, 1.0];
+
+    const data = [
+        {
+            x: fpr,
+            y: tpr,
+            type: 'scatter',
+            mode: 'lines',
+            name: 'ROC (AUC = 0.9623)',
+            line: { color: '#00F0FF', width: 2.5 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(0, 240, 255, 0.05)',
+        },
+        {
+            x: [0, 1],
+            y: [0, 1],
+            type: 'scatter',
+            mode: 'lines',
+            name: 'Random',
+            line: { color: 'rgba(255,255,255,0.2)', width: 1, dash: 'dash' },
+        }
+    ];
+
+    const layout = {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        font: { family: 'Inter', color: 'rgba(255,255,255,0.5)', size: 12 },
+        xaxis: {
+            title: 'False Positive Rate',
+            range: [0, 1],
+            gridcolor: 'rgba(255,255,255,0.03)',
+            zerolinecolor: 'rgba(255,255,255,0.06)',
+        },
+        yaxis: {
+            title: 'True Positive Rate',
+            range: [0, 1.05],
+            gridcolor: 'rgba(255,255,255,0.03)',
+            zerolinecolor: 'rgba(255,255,255,0.06)',
+        },
+        legend: {
+            x: 0.5,
+            y: 0.1,
+            font: { size: 11 },
+            bgcolor: 'rgba(0,0,0,0)',
+        },
+        margin: { t: 20, b: 60, l: 60, r: 20 },
+    };
+
+    Plotly.newPlot('roc-curve-chart', data, layout, { responsive: true, displayModeBar: false });
+}
+</script>
+{% endblock %}

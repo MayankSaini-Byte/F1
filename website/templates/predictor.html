@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+{% block title %}PitVision AI — Strategy Predictor{% endblock %}
+
+{% block content %}
+<!-- ═══════════════════════════════════════════════════════════════
+     PREDICTOR PAGE
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="predictor-section section" id="predictor" style="padding-top: 120px;">
+    <div class="grid-overlay"></div>
+    <div class="container">
+        <div class="section-divider reveal"></div>
+        <h2 class="section-title reveal">Pit Stop Predictor</h2>
+        <p class="section-subtitle reveal">Race Engineering Command Interface</p>
+
+        <div class="predictor-grid">
+            <!-- ── Input Form Panel ── -->
+            <div class="form-panel reveal">
+                <div class="form-panel-header">
+                    <span class="status-dot"></span>
+                    <h3>Race Parameters</h3>
+                </div>
+
+                <form id="predictor-form" autocomplete="off">
+                    <!-- Driver -->
+                    <div class="form-group">
+                        <label class="form-label">Driver Code</label>
+                        <select class="form-select" id="input-driver" name="Driver" required>
+                            <option value="">Select Driver</option>
+                            <option value="VER">VER — Verstappen</option>
+                            <option value="HAM">HAM — Hamilton</option>
+                            <option value="LEC">LEC — Leclerc</option>
+                            <option value="NOR">NOR — Norris</option>
+                            <option value="SAI">SAI — Sainz</option>
+                            <option value="PIA">PIA — Piastri</option>
+                            <option value="RUS">RUS — Russell</option>
+                            <option value="PER">PER — Perez</option>
+                            <option value="ALO">ALO — Alonso</option>
+                            <option value="STR">STR — Stroll</option>
+                            <option value="GAS">GAS — Gasly</option>
+                            <option value="OCO">OCO — Ocon</option>
+                            <option value="TSU">TSU — Tsunoda</option>
+                            <option value="RIC">RIC — Ricciardo</option>
+                            <option value="HUL">HUL — Hulkenberg</option>
+                            <option value="MAG">MAG — Magnussen</option>
+                            <option value="ZHO">ZHO — Zhou</option>
+                            <option value="BOT">BOT — Bottas</option>
+                            <option value="ALB">ALB — Albon</option>
+                            <option value="SAR">SAR — Sargeant</option>
+                        </select>
+                    </div>
+
+                    <!-- Tire Compound -->
+                    <div class="form-group">
+                        <label class="form-label">Tire Compound</label>
+                        <div class="tire-selector" id="tire-selector">
+                            <div class="tire-option active" data-compound="SOFT">SOFT</div>
+                            <div class="tire-option" data-compound="MEDIUM">MED</div>
+                            <div class="tire-option" data-compound="HARD">HARD</div>
+                            <div class="tire-option" data-compound="INTER">INTER</div>
+                            <div class="tire-option" data-compound="WET">WET</div>
+                        </div>
+                        <input type="hidden" id="input-compound" name="Compound" value="SOFT">
+                    </div>
+
+                    <!-- Tire Life & Lap Number -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Tire Age (Laps)</label>
+                            <div class="form-slider-container">
+                                <span class="slider-value" id="tyre-life-display">15</span>
+                                <input type="range" class="form-slider" id="input-tyrelife" name="TyreLife"
+                                       min="0" max="50" value="15">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lap Number</label>
+                            <input type="number" class="form-input" id="input-lap" name="LapNumber"
+                                   min="1" max="78" value="25" required>
+                        </div>
+                    </div>
+
+                    <!-- Position & Stint -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Position</label>
+                            <select class="form-select" id="input-position" name="Position" required>
+                                {% for i in range(1, 21) %}
+                                <option value="{{ i }}" {% if i == 5 %}selected{% endif %}>P{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Current Stint</label>
+                            <select class="form-select" id="input-stint" name="Stint" required>
+                                <option value="1" selected>Stint 1</option>
+                                <option value="2">Stint 2</option>
+                                <option value="3">Stint 3</option>
+                                <option value="4">Stint 4</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Race -->
+                    <div class="form-group">
+                        <label class="form-label">Grand Prix</label>
+                        <select class="form-select" id="input-race" name="Race" required>
+                            <option value="British Grand Prix">British Grand Prix</option>
+                            <option value="Italian Grand Prix">Italian Grand Prix</option>
+                            <option value="Monaco Grand Prix">Monaco Grand Prix</option>
+                            <option value="Belgian Grand Prix">Belgian Grand Prix</option>
+                            <option value="Japanese Grand Prix">Japanese Grand Prix</option>
+                            <option value="Abu Dhabi Grand Prix">Abu Dhabi Grand Prix</option>
+                            <option value="Australian Grand Prix">Australian Grand Prix</option>
+                            <option value="Canadian Grand Prix">Canadian Grand Prix</option>
+                            <option value="Austrian Grand Prix">Austrian Grand Prix</option>
+                            <option value="Dutch Grand Prix">Dutch Grand Prix</option>
+                            <option value="Singapore Grand Prix">Singapore Grand Prix</option>
+                            <option value="United States Grand Prix">United States Grand Prix</option>
+                            <option value="Spanish Grand Prix">Spanish Grand Prix</option>
+                            <option value="Hungarian Grand Prix">Hungarian Grand Prix</option>
+                            <option value="Bahrain Grand Prix">Bahrain Grand Prix</option>
+                            <option value="Saudi Arabian Grand Prix">Saudi Arabian Grand Prix</option>
+                            <option value="Miami Grand Prix">Miami Grand Prix</option>
+                            <option value="Chinese Grand Prix">Chinese Grand Prix</option>
+                            <option value="Azerbaijan Grand Prix">Azerbaijan Grand Prix</option>
+                            <option value="Mexican Grand Prix">Mexican Grand Prix</option>
+                            <option value="Brazilian Grand Prix">Brazilian Grand Prix</option>
+                            <option value="Las Vegas Grand Prix">Las Vegas Grand Prix</option>
+                            <option value="Qatar Grand Prix">Qatar Grand Prix</option>
+                        </select>
+                    </div>
+
+                    <!-- Year & Lap Time -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Season</label>
+                            <select class="form-select" id="input-year" name="Year" required>
+                                <option value="2025" selected>2025</option>
+                                <option value="2024">2024</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Lap Time (sec)</label>
+                            <input type="number" class="form-input" id="input-laptime" name="LapTime_s"
+                                   min="60" max="130" step="0.001" value="78.500" required>
+                        </div>
+                    </div>
+
+                    <!-- Race Progress -->
+                    <div class="form-group">
+                        <label class="form-label">Race Progress</label>
+                        <div class="form-slider-container">
+                            <span class="slider-value" id="progress-display">50%</span>
+                            <input type="range" class="form-slider" id="input-progress" name="RaceProgress"
+                                   min="0" max="100" value="50" step="1">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-predict" data-sound="click">
+                        ⚡ ANALYZE STRATEGY
+                    </button>
+                </form>
+            </div>
+
+            <!-- ── Result Panel ── -->
+            <div class="result-panel">
+                <!-- Waiting State -->
+                <div class="result-waiting" id="result-waiting">
+                    <div class="result-waiting-icon">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                            <path d="M20 5 L20 15 M20 25 L20 35 M5 20 L15 20 M25 20 L35 20" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round"/>
+                            <circle cx="20" cy="20" r="3" fill="rgba(255,255,255,0.1)"/>
+                        </svg>
+                    </div>
+                    <h3>Awaiting Input</h3>
+                    <p>Configure race parameters and submit for analysis</p>
+                </div>
+
+                <!-- Loading State -->
+                <div class="prediction-loading" id="prediction-loading">
+                    <div class="scanning-ring">
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+                                <circle cx="15" cy="15" r="4" fill="var(--neon-cyan)" opacity="0.5"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="scanning-text" id="scanning-text">Analyzing race data...</div>
+                </div>
+
+                <!-- Result Display -->
+                <div class="result-display" id="result-display">
+                    <!-- Result Header -->
+                    <div class="result-header">
+                        <div class="result-verdict">PIT STOP RECOMMENDATION</div>
+                        <div class="result-action" id="result-action">PIT NOW</div>
+                        <div class="result-lap" id="result-window">Recommended Window: Lap 25-27</div>
+                    </div>
+
+                    <!-- Confidence Ring -->
+                    <div class="confidence-container">
+                        <div class="confidence-ring">
+                            <svg viewBox="0 0 120 120">
+                                <circle class="bg-ring" cx="60" cy="60" r="52"/>
+                                <circle class="fg-ring" id="confidence-arc" cx="60" cy="60" r="52"
+                                        stroke="var(--neon-cyan)"
+                                        stroke-dasharray="326.7"
+                                        stroke-dashoffset="326.7"/>
+                            </svg>
+                            <div class="confidence-value">
+                                <div class="number" id="confidence-number">0%</div>
+                                <div class="label">Confidence</div>
+                            </div>
+                        </div>
+
+                        <div class="confidence-ring">
+                            <svg viewBox="0 0 120 120">
+                                <circle class="bg-ring" cx="60" cy="60" r="52"/>
+                                <circle class="fg-ring" id="probability-arc" cx="60" cy="60" r="52"
+                                        stroke="var(--f1-red)"
+                                        stroke-dasharray="326.7"
+                                        stroke-dashoffset="326.7"/>
+                            </svg>
+                            <div class="confidence-value">
+                                <div class="number" id="probability-number">0%</div>
+                                <div class="label">Pit Prob</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info Cards -->
+                    <div class="result-info-grid">
+                        <div class="result-info-card">
+                            <div class="info-label">Tire Life Left</div>
+                            <div class="info-value" id="result-tire-life" style="color: var(--neon-cyan);">—</div>
+                        </div>
+                        <div class="result-info-card">
+                            <div class="info-label">Strategy Risk</div>
+                            <div class="info-value" id="result-risk">—</div>
+                        </div>
+                        <div class="result-info-card" id="uncertainty-card-container" title="Formula 1 races contain unpredictable variables that cannot always be captured by historical data.">
+                            <div class="info-label">Race Uncertainty</div>
+                            <div class="info-value" id="result-uncertainty">—</div>
+                        </div>
+                    </div>
+
+                    <!-- Collapsible Model Explanation -->
+                    <div class="why-prediction-panel">
+                        <button type="button" class="why-prediction-toggle" id="why-prediction-toggle">
+                            <span>WHY THIS PREDICTION?</span>
+                            <span class="toggle-icon">▼</span>
+                        </button>
+                        <div class="why-prediction-content" id="why-prediction-content">
+                            <div class="why-prediction-title">Key Decision Factors (Model Feature Importance)</div>
+                            <div class="factors-container" id="factors-container">
+                                <!-- Populated dynamically by predictor.js -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="chart-card" style="margin-top: 24px;">
+                        <div class="chart-title">Tire Degradation Curve</div>
+                        <div id="tire-wear-chart" style="width:100%; height:220px;"></div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-title">Strategy Comparison</div>
+                        <div id="strategy-chart" style="width:100%; height:220px;"></div>
+                    </div>
+
+                    <!-- Premium Strategy Caution Panel -->
+                    <div class="strategy-caution-panel">
+                        <div class="caution-header">
+                            <span class="caution-icon">⚠️</span>
+                            <h4>STRATEGY CAUTION</h4>
+                        </div>
+                        <p class="caution-text">
+                            This prediction is generated using historical race data and machine learning patterns. Actual pit stop decisions may differ due to real-time race conditions such as Safety Cars, Virtual Safety Cars, weather changes, tire performance, track evolution, team strategy, traffic, incidents, and competitor actions.
+                        </p>
+                        <div class="caution-tags">
+                            <span class="caution-tag">Safety Car</span>
+                            <span class="caution-tag">VSC</span>
+                            <span class="caution-tag">Weather</span>
+                            <span class="caution-tag">Traffic</span>
+                            <span class="caution-tag">Tire Degradation</span>
+                            <span class="caution-tag">Team Strategy</span>
+                            <span class="caution-tag">Incidents</span>
+                            <span class="caution-tag">Undercut Threat</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Professional Muted Disclaimer -->
+        <div class="professional-disclaimer-muted">
+            PitVision AI is an educational machine learning project inspired by Formula 1 race strategy analysis. Predictions are statistical estimates and should not be interpreted as real-world team strategy recommendations.
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/predictor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+{% endblock %}

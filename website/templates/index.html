@@ -1,0 +1,389 @@
+{% extends "base.html" %}
+{% block title %}PitVision AI — Predict the Next Pit Stop{% endblock %}
+
+{% block content %}
+<!-- ═══════════════════════════════════════════════════════════════
+     HERO SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="hero" id="hero">
+    <div class="hero-bg"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Animated telemetry lines -->
+    <div class="hero-lines">
+        <div class="h-line"></div>
+        <div class="h-line"></div>
+        <div class="h-line"></div>
+        <div class="h-line"></div>
+    </div>
+
+    <!-- Particle canvas -->
+    <canvas id="hero-particles"></canvas>
+
+    <!-- Hero Content -->
+    <div class="hero-content">
+        <div class="hero-tag">Machine Learning × Formula 1</div>
+        <h1 class="hero-title">
+            PREDICT THE<br>
+            <span class="highlight">NEXT PIT STOP</span>
+        </h1>
+        <p class="hero-subtitle">
+            Machine Learning Powered Formula 1 Strategy Analysis.
+            Real-time pit stop predictions using advanced Random Forest models trained on race telemetry.
+        </p>
+        <div class="hero-buttons">
+            <a href="/predictor" class="btn btn-primary" data-sound="click">
+                ⚡ Try Predictor
+            </a>
+            <a href="/model-insights" class="btn btn-secondary" data-sound="click">
+                📊 Model Insights
+            </a>
+        </div>
+    </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FEATURES SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="section bg-carbon-dark" id="features">
+    <div class="grid-overlay"></div>
+    <div class="container">
+        <div class="section-divider reveal"></div>
+        <h2 class="section-title reveal">Race Intelligence</h2>
+        <p class="section-subtitle reveal">Engineered for precision strategy decisions</p>
+
+        <div class="telemetry-grid">
+            <div class="card reveal" style="animation-delay: 0.1s;">
+                <div style="font-size: 2rem; margin-bottom: 16px;">🧠</div>
+                <h3 style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">ML Predictions</h3>
+                <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); line-height: 1.7;">Random Forest model trained on real F1 telemetry data. Predicts optimal pit windows with high confidence.</p>
+            </div>
+            <div class="card reveal" style="animation-delay: 0.2s;">
+                <div style="font-size: 2rem; margin-bottom: 16px;">📊</div>
+                <h3 style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">Data Driven</h3>
+                <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); line-height: 1.7;">Analyzed thousands of race laps across multiple seasons. Tire degradation, position pressure, and more.</p>
+            </div>
+            <div class="card reveal" style="animation-delay: 0.3s;">
+                <div style="font-size: 2rem; margin-bottom: 16px;">⚡</div>
+                <h3 style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">Real-Time</h3>
+                <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); line-height: 1.7;">Instant strategy recommendations. Input current race conditions and get pit stop predictions in milliseconds.</p>
+            </div>
+            <div class="card reveal" style="animation-delay: 0.4s;">
+                <div style="font-size: 2rem; margin-bottom: 16px;">🏁</div>
+                <h3 style="font-family: var(--font-heading); font-size: 0.85rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;">Strategy Edge</h3>
+                <p style="font-size: 0.85rem; color: rgba(255,255,255,0.4); line-height: 1.7;">Compare aggressive, balanced, and conservative strategies. Confidence scoring and risk assessment built in.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TELEMETRY DASHBOARD SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="telemetry-section section" id="telemetry">
+    <div class="grid-overlay"></div>
+    <div class="container">
+        <div class="section-divider reveal"></div>
+        <h2 class="section-title reveal">Live Telemetry</h2>
+        <p class="section-subtitle reveal">Simulated race engineering data</p>
+
+        <div class="telemetry-grid">
+            <!-- Tire Temperatures -->
+            <div class="telemetry-card reveal">
+                <div class="telemetry-card-header">
+                    <span class="telemetry-card-title">Tire Temperatures</span>
+                    <span class="telemetry-live-dot"></span>
+                </div>
+                <div class="tire-temp-grid">
+                    <div class="tire-temp">
+                        <div class="tire-temp-label">FL</div>
+                        <div class="tire-temp-value temp-optimal" id="tire-fl">98°C</div>
+                    </div>
+                    <div class="tire-temp">
+                        <div class="tire-temp-label">FR</div>
+                        <div class="tire-temp-value temp-hot" id="tire-fr">105°C</div>
+                    </div>
+                    <div class="tire-temp">
+                        <div class="tire-temp-label">RL</div>
+                        <div class="tire-temp-value temp-optimal" id="tire-rl">96°C</div>
+                    </div>
+                    <div class="tire-temp">
+                        <div class="tire-temp-label">RR</div>
+                        <div class="tire-temp-value temp-hot" id="tire-rr">108°C</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sector Times -->
+            <div class="telemetry-card reveal">
+                <div class="telemetry-card-header">
+                    <span class="telemetry-card-title">Sector Times</span>
+                    <span class="telemetry-live-dot"></span>
+                </div>
+                <div class="sector-times">
+                    <div class="sector">
+                        <div class="sector-label">S1</div>
+                        <div class="sector-value sector-purple" id="sector-1">28.341</div>
+                    </div>
+                    <div class="sector">
+                        <div class="sector-label">S2</div>
+                        <div class="sector-value sector-green" id="sector-2">34.129</div>
+                    </div>
+                    <div class="sector">
+                        <div class="sector-label">S3</div>
+                        <div class="sector-value sector-yellow" id="sector-3">25.872</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 14px;">
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.3); letter-spacing: 1px;">LAP TIME</span>
+                    <div style="font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; color: var(--risk-low);" id="lap-time">1:28.342</div>
+                </div>
+            </div>
+
+            <!-- Fuel Load -->
+            <div class="telemetry-card reveal">
+                <div class="telemetry-card-header">
+                    <span class="telemetry-card-title">Fuel Load</span>
+                    <span class="telemetry-live-dot"></span>
+                </div>
+                <div class="gauge-container">
+                    <svg class="gauge-svg" viewBox="0 0 160 100">
+                        <path class="gauge-bg" d="M 20 80 A 60 60 0 0 1 140 80"/>
+                        <path class="gauge-fill" id="fuel-gauge" d="M 20 80 A 60 60 0 0 1 140 80"
+                              stroke="url(#fuelGradient)" stroke-dasharray="188.5" stroke-dashoffset="56.5"/>
+                        <text class="gauge-value-text" x="80" y="72" id="fuel-value">70%</text>
+                        <text class="gauge-label-text" x="80" y="90">REMAINING</text>
+                        <defs>
+                            <linearGradient id="fuelGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#FF3D00"/>
+                                <stop offset="50%" stop-color="#FFD600"/>
+                                <stop offset="100%" stop-color="#00E676"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Mini Track Map -->
+            <div class="telemetry-card reveal">
+                <div class="telemetry-card-header">
+                    <span class="telemetry-card-title">Track Position</span>
+                    <span class="telemetry-live-dot"></span>
+                </div>
+                <div class="track-map-container">
+                    <svg class="track-map-svg" viewBox="0 0 200 140" fill="none">
+                        <!-- Simplified Silverstone-esque track outline -->
+                        <path class="track-map-path" id="track-path"
+                              d="M40 100 Q20 100 20 80 L20 50 Q20 30 40 25 L60 20 Q80 15 100 20 L130 30 Q150 35 160 25 Q170 15 180 25 L185 40 Q190 60 180 75 L170 85 Q160 100 140 105 L100 110 Q60 112 40 100Z"/>
+                        <!-- Car position dot -->
+                        <circle class="track-map-position" id="track-dot" cx="40" cy="100" r="5">
+                            <animateMotion dur="8s" repeatCount="indefinite">
+                                <mpath href="#track-path"/>
+                            </animateMotion>
+                        </circle>
+                        <!-- DRS Zone -->
+                        <path d="M60 20 L100 20" stroke="#00E676" stroke-width="2" opacity="0.4" stroke-dasharray="4 2"/>
+                        <text x="75" y="14" fill="#00E676" font-size="6" text-anchor="middle" opacity="0.5" font-family="JetBrains Mono">DRS</text>
+                    </svg>
+                </div>
+                <div style="text-align: center; margin-top: 8px;">
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.3);">LAP</span>
+                    <span style="font-family: var(--font-heading); font-size: 1rem; font-weight: 700; margin-left: 6px;" id="current-lap">42</span>
+                    <span style="font-family: var(--font-mono); font-size: 0.65rem; color: rgba(255,255,255,0.3);">/ 57</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ABOUT SECTION
+     ═══════════════════════════════════════════════════════════════ -->
+<section class="about-section section bg-carbon-dark" id="about">
+    <div class="grid-overlay"></div>
+    <div class="container">
+        <div class="section-divider reveal"></div>
+        <h2 class="section-title reveal">About Project</h2>
+        <p class="section-subtitle reveal">Engineering meets data science</p>
+
+        <div class="about-grid">
+            <div class="about-text reveal">
+                <h3>Machine Learning for F1 Strategy</h3>
+                <p>
+                    PitVision AI uses a Random Forest Classifier trained on real Formula 1 race data to predict
+                    optimal pit stop timing. The model analyzes tire degradation patterns, race position dynamics,
+                    lap time deltas, and compound-specific wear rates to deliver actionable strategy recommendations.
+                </p>
+                <p>
+                    Built with Python's scikit-learn ecosystem, the model processes 20+ engineered features including
+                    tyre stress indices, degradation rates, and position pressure metrics to achieve 98.47% accuracy
+                    on validation data.
+                </p>
+                <div class="tech-badges" style="justify-content: flex-start; margin-top: 24px;">
+                    <span class="tech-badge">🐍 Python</span>
+                    <span class="tech-badge">🧠 Scikit-Learn</span>
+                    <span class="tech-badge">🐼 Pandas</span>
+                    <span class="tech-badge">🔢 NumPy</span>
+                    <span class="tech-badge">🌐 Flask</span>
+                    <span class="tech-badge">📊 Plotly.js</span>
+                    <span class="tech-badge">💾 Joblib</span>
+                </div>
+            </div>
+
+            <div class="reveal">
+                <!-- Architecture Diagram -->
+                <div class="card" style="padding: 28px;">
+                    <div class="chart-title">System Architecture</div>
+                    <div class="architecture-flow">
+                        <div class="arch-node">
+                            <div class="arch-node-icon">📦</div>
+                            <div class="arch-node-label">Race Data</div>
+                        </div>
+                        <div class="arch-arrow">→</div>
+                        <div class="arch-node">
+                            <div class="arch-node-icon">⚙️</div>
+                            <div class="arch-node-label">Features</div>
+                        </div>
+                        <div class="arch-arrow">→</div>
+                        <div class="arch-node">
+                            <div class="arch-node-icon">🧠</div>
+                            <div class="arch-node-label">RF Model</div>
+                        </div>
+                        <div class="arch-arrow">→</div>
+                        <div class="arch-node">
+                            <div class="arch-node-icon">🌐</div>
+                            <div class="arch-node-label">Flask API</div>
+                        </div>
+                        <div class="arch-arrow">→</div>
+                        <div class="arch-node">
+                            <div class="arch-node-icon">🏎️</div>
+                            <div class="arch-node-label">Dashboard</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Initialize hero particles
+document.addEventListener('DOMContentLoaded', () => {
+    initHeroParticles();
+    initTelemetrySimulation();
+});
+
+function initHeroParticles() {
+    const canvas = document.getElementById('hero-particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const particles = [];
+    const PARTICLE_COUNT = 60;
+
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+        particles.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            vx: -Math.random() * 2 - 0.5,
+            vy: (Math.random() - 0.5) * 0.5,
+            size: Math.random() * 2 + 0.5,
+            opacity: Math.random() * 0.5 + 0.1,
+            color: Math.random() > 0.7 ? '#E10600' : '#00F0FF',
+        });
+    }
+
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.opacity;
+            ctx.fill();
+
+            // Speed trail
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x + 15 + Math.random() * 10, p.y);
+            ctx.strokeStyle = p.color;
+            ctx.globalAlpha = p.opacity * 0.3;
+            ctx.lineWidth = p.size * 0.5;
+            ctx.stroke();
+
+            p.x += p.vx;
+            p.y += p.vy;
+            if (p.x < -20) { p.x = canvas.width + 20; p.y = Math.random() * canvas.height; }
+        });
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
+
+function initTelemetrySimulation() {
+    const tireEls = { fl: 'tire-fl', fr: 'tire-fr', rl: 'tire-rl', rr: 'tire-rr' };
+    const sectorEls = ['sector-1', 'sector-2', 'sector-3'];
+
+    setInterval(() => {
+        // Update tire temps
+        Object.values(tireEls).forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const base = 85 + Math.random() * 30;
+            const temp = Math.round(base);
+            el.textContent = temp + '°C';
+            el.className = 'tire-temp-value ' +
+                (temp > 105 ? 'temp-critical' : temp > 95 ? 'temp-hot' : 'temp-optimal');
+        });
+
+        // Update sector times
+        sectorEls.forEach((id, i) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const bases = [28, 34, 25];
+            const time = (bases[i] + Math.random() * 1.5 - 0.5).toFixed(3);
+            el.textContent = time;
+            const colors = ['sector-purple', 'sector-green', 'sector-yellow'];
+            const colorIdx = Math.floor(Math.random() * 3);
+            el.className = 'sector-value ' + colors[colorIdx];
+        });
+
+        // Update lap time
+        const lapEl = document.getElementById('lap-time');
+        if (lapEl) {
+            const total = 85 + Math.random() * 5;
+            const mins = Math.floor(total / 60);
+            const secs = (total % 60).toFixed(3);
+            lapEl.textContent = mins + ':' + secs.padStart(6, '0');
+        }
+
+        // Update fuel
+        const fuelEl = document.getElementById('fuel-value');
+        if (fuelEl) {
+            const fuel = Math.max(10, 70 - Math.random() * 5);
+            fuelEl.textContent = Math.round(fuel) + '%';
+        }
+
+        // Update lap counter
+        const lapCountEl = document.getElementById('current-lap');
+        if (lapCountEl) {
+            const lap = 40 + Math.floor(Math.random() * 10);
+            lapCountEl.textContent = lap;
+        }
+    }, 2000);
+}
+</script>
+{% endblock %}

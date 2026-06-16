@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PitVision AI — Machine Learning Powered Formula 1 Pit Stop Strategy Prediction. Predict optimal pit stop timing using advanced ML models.">
+    <meta name="keywords" content="Formula 1, F1, Pit Stop, Machine Learning, AI, Strategy, Racing">
+    <meta name="author" content="PitVision AI">
+    <meta name="theme-color" content="#0A0A0A">
+
+    <title>{% block title %}PitVision AI — F1 Pit Stop Strategy Predictor{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230A0A0A'/%3E%3Ctext x='3' y='22' font-family='sans-serif' font-weight='900' font-size='14' fill='%23E10600'%3EPV%3C/text%3E%3C/svg%3E">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- Plotly.js for charts -->
+    <script src="https://cdn.plot.ly/plotly-2.35.0.min.js" charset="utf-8"></script>
+
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-carbon">
+
+    <!-- ═══ Loading Screen ═══ -->
+    <div id="loading-screen">
+        <div class="loading-logo">
+            <span class="red">PIT</span><span class="white">VISION</span> <span class="ai" style="color: var(--neon-cyan);">AI</span>
+        </div>
+
+        <!-- Full-screen lane for F1 car transition -->
+        <div class="loading-car-lane">
+            <div class="speed-lines-full">
+                <div class="speed-line-transition"></div>
+                <div class="speed-line-transition"></div>
+                <div class="speed-line-transition"></div>
+                <div class="speed-line-transition"></div>
+            </div>
+            <img src="{{ url_for('static', filename='img/f1-car.png') }}" class="loading-car-new" alt="F1 Car Transition">
+        </div>
+
+        <div class="loading-progress-container">
+            <div class="loading-progress-bar" id="loading-bar"></div>
+        </div>
+        <div class="loading-text" id="loading-text">Initializing telemetry...</div>
+    </div>
+
+    <!-- ═══ Navigation ═══ -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="/" class="nav-logo">
+                <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="36" height="36" rx="8" fill="#0A0A0A" stroke="#E10600" stroke-width="1"/>
+                    <text x="4" y="24" font-family="Orbitron, sans-serif" font-weight="900" font-size="13" fill="#E10600">PV</text>
+                    <line x1="4" y1="28" x2="32" y2="28" stroke="#00F0FF" stroke-width="0.5" opacity="0.5"/>
+                </svg>
+                <span><span class="pit">PIT</span><span class="vision">VISION</span> <span class="ai">AI</span></span>
+            </a>
+
+            <ul class="nav-links" id="nav-links">
+                <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+                <li><a href="/predictor" class="{% if request.path == '/predictor' %}active{% endif %}">Predictor</a></li>
+                <li><a href="/model-insights" class="{% if request.path == '/model-insights' %}active{% endif %}">Insights</a></li>
+                <li>
+                    <button class="sound-toggle" id="sound-toggle" title="Toggle Sound">
+                        🔇
+                    </button>
+                </li>
+            </ul>
+
+            <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ═══ Main Content ═══ -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- ═══ Footer ═══ -->
+    <footer class="footer bg-carbon-dark">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="pit">PIT</span><span class="vision">VISION</span> AI
+                    </div>
+                    <p>Machine Learning powered Formula 1 pit stop strategy prediction. Built with precision engineering and data science.</p>
+                </div>
+                <div>
+                    <h4 class="footer-heading">Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/predictor">Predictor</a></li>
+                        <li><a href="/model-insights">Model Insights</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-heading">Technology</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Python</a></li>
+                        <li><a href="#">Scikit-Learn</a></li>
+                        <li><a href="#">Flask</a></li>
+                        <li><a href="#">Plotly.js</a></li>
+                    </ul>
+                </div>
+
+            </div>
+            <div class="footer-bottom">
+                <span>© 2025 PitVision AI. All rights reserved.</span>
+                <div class="footer-bottom-links">
+                    <span>Built with 🏎️ and ML</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ═══ Scripts ═══ -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
