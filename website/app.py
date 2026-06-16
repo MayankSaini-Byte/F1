@@ -7,20 +7,34 @@ import sys
 import joblib
 import numpy as np
 import pandas as pd
+import gdown
 from flask import Flask, render_template, request, jsonify
 
-# Add parent directory for imports
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 app = Flask(__name__)
 
 # ── Model Loading ──────────────────────────────────────────────
 MODELS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models'))
+os.makedirs(MODELS_DIR, exist_ok=True)
 
-print("[*] Loading ML model... (this may take a moment)")
 MODEL_PATH = os.path.join(MODELS_DIR, 'predict_pit_stop.pkl')
 SCALER_PATH = os.path.join(MODELS_DIR, 'scaler.pkl')
 
+# ── Download models from Google Drive if not present ──────────
+MODEL_GDRIVE_ID = "1PmG2rpzSwQQ-04Ymodk1Rh6MM8AIz4eB"
+SCALER_GDRIVE_ID = "1x5rckj7HpaIBKOm-7MR42BBmELYqxEyT"
+
+if not os.path.exists(MODEL_PATH):
+    print("[*] Downloading model from Google Drive...")
+    gdown.download(f"https://drive.google.com/uc?id={MODEL_GDRIVE_ID}", MODEL_PATH, quiet=False)
+
+if not os.path.exists(SCALER_PATH):
+    print("[*] Downloading scaler from Google Drive...")
+    gdown.download(f"https://drive.google.com/uc?id={SCALER_GDRIVE_ID}", SCALER_PATH, quiet=False)
+
+# ── Load models ───────────────────────────────────────────────
+print("[*] Loading ML model...")
 model = None
 preprocessor = None
 
@@ -30,10 +44,8 @@ try:
     print("[OK] Model and preprocessor loaded successfully!")
 except FileNotFoundError as e:
     print(f"[WARN] Model files not found: {e}")
-    print("   The app will run but predictions will return mock data.")
 except Exception as e:
     print(f"[WARN] Error loading model: {e}")
-
 
 # ── Feature Names for Insights ─────────────────────────────────
 def get_feature_importances():
@@ -211,4 +223,4 @@ def api_model_info():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host= "0.0.0.0")
+    app.run(debug=True, host = "0.0.0.0")
