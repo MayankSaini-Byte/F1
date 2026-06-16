@@ -42,6 +42,5 @@ dist/
 *.tmp
 *.temp
 
-# remove models
-models/
+# Data
 data/CSVs/train.csv
